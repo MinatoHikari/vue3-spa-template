@@ -1,0 +1,15 @@
+{
+    "extends": "@antfu",
+    "rules": {
+        "@typescript-eslint/indent": ["warn", 4],
+        "@typescript-eslint/semi": "off",
+        "@typescript-eslint/member-delimiter-style": "off",
+        "@typescript-eslint/no-unused-vars": "warn",
+        "space-before-function-paren": "off",
+        "antfu/if-newline": "off",
+        "semi": "off",
+        "curly": "off",
+        "vue/html-indent": ["warn", 4],
+        "vue/component-tags-order": "off"
+    }
+}
