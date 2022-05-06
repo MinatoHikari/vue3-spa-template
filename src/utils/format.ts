@@ -1,10 +1,10 @@
 export function getForm(
-    params: { [key: string]: any },
+    params: Record<string, any>,
     withIndex = true,
     addEmpty = false,
 ): FormData {
-    let form = new FormData();
-    for (let key in params) {
+    const form = new FormData();
+    for (const key in params) {
         const condition = addEmpty || params[key] || params[key] === 0;
         if (condition && !Array.isArray(params[key])) {
             form.append(key, params[key]);

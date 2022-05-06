@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { AxiosRequestConfig } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 import { useVDR } from 'v-demi-request';
 import { defineComponent } from 'vue';
 import { getExampleKey } from '~/requests/common/auth.request';

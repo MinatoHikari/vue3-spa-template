@@ -8,6 +8,7 @@ import Components from 'unplugin-vue-components/vite';
 import AutoImport from 'unplugin-auto-import/vite';
 import Layouts from 'vite-plugin-vue-layouts';
 import Unocss from 'unocss/vite';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 
 export default defineConfig({
@@ -28,6 +29,10 @@ export default defineConfig({
     plugins: [
         Vue({
             reactivityTransform: true,
+        }),
+
+        vueJsx({
+            // options are passed on to @vue/babel-plugin-jsx
         }),
 
         // https://github.com/hannoeru/vite-plugin-pages
