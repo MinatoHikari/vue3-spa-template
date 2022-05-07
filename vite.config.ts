@@ -22,7 +22,7 @@ export default defineConfig({
             '/api/': {
                 target: 'http://www.example.com/',
                 changeOrigin: true,
-                rewrite: path => path.replace(/^\/api/, ''),
+                rewrite: (path) => path.replace(/^\/api/, ''),
             },
         },
     },
@@ -36,7 +36,9 @@ export default defineConfig({
         }),
 
         // https://github.com/hannoeru/vite-plugin-pages
-        Pages(),
+        Pages({
+            exclude: ['**/scripts/**'],
+        }),
 
         Layouts(),
 
