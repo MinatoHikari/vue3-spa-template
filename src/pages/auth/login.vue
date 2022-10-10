@@ -1,7 +1,7 @@
 <template>
     <div class="h-full">
         <n-grid x-gap="12" :cols="3">
-            <n-gi></n-gi>
+            <n-gi/>
             <n-gi>
                 <n-space justify="center">
                     <n-card class="w-120 mt-30">
@@ -27,7 +27,7 @@
                     </n-card>
                 </n-space>
             </n-gi>
-            <n-gi></n-gi>
+            <n-gi/>
         </n-grid>
     </div>
 </template>

@@ -4,6 +4,7 @@
         "@typescript-eslint/indent": "off",
         "yml/indent": ["warn", 4],
         "no-console": "warn",
+        "arrow-parens": "off",
         "@typescript-eslint/semi": "off",
         "@typescript-eslint/brace-style": "off",
         "@typescript-eslint/member-delimiter-style": "off",
@@ -13,6 +14,7 @@
         "semi": "off",
         "curly": "off",
         "vue/html-indent": ["warn", 4],
+        "vue/singleline-html-element-content-newline": "off",
         "vue/component-tags-order": "off"
     }
 }

@@ -3,7 +3,7 @@ export interface NavDataOrigin {
     children?: NavDataOrigin[];
     label?: string | JSX.Element;
     path?: string;
-    parent?: { label?: string; children?: NavDataOrigin[] } | NavDataOrigin;
+    parent?: { label?: string | JSX.Element; children?: NavDataOrigin[] } | NavDataOrigin;
     name?: string;
 }
 
@@ -14,7 +14,7 @@ export const formatRoutes = <T = Record<string, unknown>>(source: T[], parentNam
         const item = (source as NavDataOrigin[])[i];
         if (parentName) item.label = `${parentName}-${item.path}`;
         else item.label = `${item.path}`;
-        item.key = item.name ?? item.path as string;
+        item.key = item.name ?? (item.path as string);
         routerMap.set(item.key, item);
         if (item.children) {
             formatRoutes(item.children, item.path);

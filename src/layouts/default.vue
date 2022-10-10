@@ -18,7 +18,9 @@
 </template>
 
 <script lang="ts">
+import type { Ref } from 'vue';
 import { defineComponent } from 'vue';
+import type { MenuOption } from 'naive-ui';
 import { fakeRoutes } from '~/main';
 import { getRouteDataKey } from '~/requests/common/auth.request';
 import { useCommonStore } from '~/stores/common';
@@ -27,22 +29,6 @@ import { navigationGuard } from '~/utils/navigationGuard';
 import { formatRoutes } from '~/utils/router';
 
 export default defineComponent({
-    setup() {
-        const commonStore = useCommonStore();
-
-        const menuOptions = computed(() => commonStore.formattedRoutes);
-
-        console.log(menuOptions.value)
-        watch(menuOptions, (v) => {
-            console.log(v);
-        });
-
-        const handleUpdateValue = (e: unknown) => {
-            console.log(e);
-        };
-
-        return { menuOptions, handleUpdateValue };
-    },
     beforeRouteEnter(to, from, next) {
         navigationGuard(to, from, next, {
             onSourceFetch: async () => {
@@ -66,6 +52,22 @@ export default defineComponent({
                 next();
             },
         });
+    },
+    setup() {
+        const commonStore = useCommonStore();
+
+        const menuOptions = computed(() => commonStore.formattedRoutes);
+
+        console.log(menuOptions.value);
+        watch(menuOptions, (v) => {
+            console.log(v);
+        });
+
+        const handleUpdateValue = (e: unknown) => {
+            console.log(e);
+        };
+
+        return { menuOptions: menuOptions as Ref<MenuOption[]>, handleUpdateValue };
     },
 });
 </script>
