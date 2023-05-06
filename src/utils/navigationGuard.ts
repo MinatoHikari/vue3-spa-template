@@ -1,22 +1,27 @@
-import { useStorage } from '@vueuse/core';
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
 import { useCommonStore } from '~/stores/common';
 import type { NavDataOrigin } from '~/utils/router';
+import { useAuthToken } from '~/utils/token';
 
 export interface RouteNavigationGuardConfig<T> {
     onSourceFetch: () => Promise<T>;
     sourceFormatter: (source: T) => Promise<NavDataOrigin[]>;
-    routerAuth: (source: NavDataOrigin[]) => Promise<boolean>;
-    onAuthFailed: () => void;
-    onAuthSuccess: () => void;
+    routerAuth: (to: RouteLocationNormalized, source: NavDataOrigin[]) => Promise<boolean>;
+    onAuthFailed: (type: 'session' | 'route') => void;
+    onAuthSuccess: (to: RouteLocationNormalized) => void;
     excludeRoutes?: string[];
 }
 
+export enum AuthFailedType {
+    Session = 'session',
+    Route = 'route',
+}
+
 const sessionAuth = async () => {
-    const authToken = useStorage('authToken', '', sessionStorage);
+    const { authToken } = useAuthToken();
     const commonStore = useCommonStore();
     if (authToken) {
-        if (!commonStore.authorization) commonStore.setAuthToken(authToken.value);
+        if (!commonStore.authToken) commonStore.setAuthToken(authToken.value);
         return true;
     }
     return false;
@@ -30,17 +35,26 @@ export const navigationGuard = async <T>(
 ) => {
     const commonStore = useCommonStore();
 
-    const routeData = await config.onSourceFetch();
-    const formattedRouteData = await config.sourceFormatter(routeData);
-    commonStore.formattedRoutes = formattedRouteData;
-    let isSessionAuthSuccess = false;
-    isSessionAuthSuccess = await sessionAuth();
+    const isSessionAuthSuccess = await sessionAuth();
     let isRouterAuthSuccess = false;
+
     if (isSessionAuthSuccess) {
-        isRouterAuthSuccess = await config.routerAuth(formattedRouteData);
-    } else config.onAuthFailed();
+        let formattedRouteData: NavDataOrigin[] = [];
+        if (commonStore.formattedRoutes.length === 0) {
+            const routeData = await config.onSourceFetch().catch((err) => {
+                console.log(err);
+                config.onAuthFailed(AuthFailedType.Session);
+            });
+            if (!routeData) return;
+            formattedRouteData = await config.sourceFormatter(routeData);
+            commonStore.formattedRoutes = formattedRouteData;
+        } else {
+            formattedRouteData = commonStore.formattedRoutes;
+        }
+        isRouterAuthSuccess = await config.routerAuth(to, formattedRouteData);
+    } else config.onAuthFailed(AuthFailedType.Session);
 
     if (isRouterAuthSuccess || (config.excludeRoutes && config.excludeRoutes.includes(to.path)))
-        config.onAuthSuccess();
-    else config.onAuthFailed();
+        await config.onAuthSuccess(to);
+    else config.onAuthFailed(AuthFailedType.Route);
 };

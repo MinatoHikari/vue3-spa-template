@@ -6,4 +6,9 @@ dist
 dist-ssr
 node_modules
 .idea/
+.vscode/
+.fleet/
 *.log
+
+/config.toml
+webhook-service

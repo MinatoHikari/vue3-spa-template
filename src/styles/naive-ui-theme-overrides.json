@@ -1,0 +1,127 @@
+{
+    "LoadingBar": {
+        "colorLoading": "#18A058FF"
+    },
+    "Badge": {
+        "color": "#FF4444ff",
+        "colorError": "#FF4444FF",
+        "colorInfo": "#52C41AFF",
+        "colorSuccess": "#52C41AFF",
+        "colorWarning": "#FAAD14FF"
+    },
+    "IconWrapper": {
+        "color": "#1890FFFF"
+    },
+    "common": {
+        "primaryColor": "#2080f0FF",
+        "primaryColorHover": "#4098fcFF",
+        "primaryColorPressed": "#1060c9FF",
+        "primaryColorSuppl": "#4098fcFF",
+        "infoColor": "#1890FFFF",
+        "infoColorPressed": "#0870F0FF",
+        "infoColorHover": "#4098fc",
+        "successColor": "#52C41AFF",
+        "successColorPressed": "#389E0DFF",
+        "successColorHover": "#95DE64FF",
+        "successColorSuppl": "#95DE64FF",
+        "warningColor": "#FAAD14FF",
+        "warningColorHover": "#ffd666FF",
+        "warningColorSuppl": "#ffd666FF",
+        "warningColorPressed": "#d48806FF",
+        "errorColor": "#ff4d4fFF",
+        "errorColorHover": "#ff7875FF",
+        "errorColorPressed": "#d9363eFF",
+        "errorColorSuppl": "#ff7875FF",
+        "fontSizeSmall": "12px",
+        "fontSizeMedium": "13px",
+        "fontSize": "13px",
+        "heightMedium": "30px",
+        "heightSmall": "24px",
+        "heightTiny": "18px",
+        "heightLarge": "36px",
+        "heightHuge": "42px"
+    },
+    "DataTable": {
+        "thColor": "#E7F3FFFF",
+        "thColorModal": "#E7F3FFFF"
+    },
+    "Form": {
+        "feedbackHeightSmall": "18px",
+        "feedbackHeightMedium": "20px",
+        "feedbackFontSizeSmall": "12px",
+        "labelFontSizeLeftSmall": "13px",
+        "feedbackFontSizeMedium": "13px",
+        "feedbackHeightLarge": "24px"
+    },
+    "Menu": {
+        "itemHeight": "38px",
+        "itemTextColorActive": "#1890FFFF",
+        "itemTextColorActiveHover": "#1890FFFF",
+        "itemTextColorChildActive": "#1890FFFF",
+        "itemTextColorChildActiveHover": "#1890FFFF",
+        "itemTextColorActiveHoverHorizontal": "#1890FFFF",
+        "itemTextColorChildActiveHorizontal": "#1890FFFF",
+        "itemTextColorChildActiveHoverHorizontal": "#1890FFFF",
+        "itemTextColorActiveHorizontal": "#1890FFFF",
+        "itemTextColorHoverHorizontal": "#4098FFFF",
+        "itemIconColorActive": "#1890FFFF",
+        "itemIconColorActiveHover": "#1890FFFF",
+        "itemIconColorChildActiveHover": "#1890FFFF",
+        "itemIconColorChildActive": "#1890FFFF",
+        "itemIconColorActiveHorizontal": "#1890FFFF",
+        "itemIconColorActiveHoverHorizontal": "#1890FFFF",
+        "itemIconColorChildActiveHorizontal": "#1890FFFF",
+        "itemIconColorChildActiveHoverHorizontal": "#1890FFFF",
+        "arrowColorActive": "#1890FFFF",
+        "arrowColorActiveHover": "#1890FFFF",
+        "arrowColorChildActive": "#1890FFFF",
+        "arrowColorChildActiveHover": "#1890FFFF",
+        "itemColorActiveInverted": "#1890FFFF",
+        "itemColorActiveHoverInverted": "#1890FFFF",
+        "itemColorActiveCollapsedInverted": "#1890FFFF"
+    },
+    "Message": {
+        "iconColorLoading": "#1890FFFF",
+        "loadingColor": "#1890FFFF"
+    },
+    "Tree": {
+        "loadingColor": "#1890FFFF",
+        "dropMarkColor": "#1890FFFF"
+    },
+    "Typography": {
+        "aTextColor": "#1890FFFF",
+        "headerBarColor": "#1890FFFF",
+        "headerBarColorPrimary": "#1890FFFF",
+        "textColorPrimary": "#1890FFFF"
+    },
+    "TimePicker": {
+        "itemTextColorActive": "#1890FFFF"
+    },
+    "Tag": {
+        "colorChecked": "#1890FFFF",
+        "colorCheckedPressed": "#0870F0FF"
+    },
+    "Tabs": {
+        "tabTextColorActiveLine": "#1890FFFF",
+        "tabTextColorHoverLine": "#1890FFFF"
+    },
+    "Switch": {
+        "loadingColor": "#1890FFFF",
+        "railColorActive": "#1890FFFF"
+    },
+    "Steps": {
+        "indicatorTextColorFinish": "#1890FFFF",
+        "indicatorBorderColorProcess": "#1890FFFF",
+        "indicatorBorderColorFinish": "#1890FFFF",
+        "indicatorColorProcess": "#1890FFFF",
+        "splitorColorFinish": "#1890FFFF"
+    },
+    "Spin": {
+        "textColor": "#1890FFFF",
+        "color": "#1890FFFF"
+    },
+    "Slider": {
+        "fillColor": "#1890FFFF",
+        "fillColorHover": "#1890FFFF"
+    }
+}

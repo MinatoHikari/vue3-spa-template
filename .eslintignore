@@ -1,0 +1,8 @@
+.idea/
+.vscode/
+.fleet/
+node_modules
+dist
+.DS_Store
+auto-import.d.ts
+components.d.ts
