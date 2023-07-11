@@ -59,15 +59,15 @@ export const useUserStore = defineStore('user', () => {
 
     const getUserInfo = async () => {
         const router = instanceRouter ?? globalRouter;
-        if (!userInfo.value) {
-            return commonRequests.getUserInfo().then(async (res) => {
-                await resHandler(res, {
-                    onSuccess: ({ res }) => {
-                        userInfo.value = res.user;
-                    },
-                });
-            });
-        }
+        // if (!userInfo.value) {
+        //     return commonRequests.getUserInfo().then(async (res) => {
+        //         await resHandler(res, {
+        //             onSuccess: ({ res }) => {
+        //                 userInfo.value = res.user;
+        //             },
+        //         });
+        //     });
+        // }
     };
 
     return {
