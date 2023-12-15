@@ -208,7 +208,7 @@ export function useAwsS3() {
     // 文件列表
     const listObjects = async (filter: {
         Delimiter?: string
-        EncodingType?: string
+        EncodingType?: url
         Marker?: string
         MaxKeys?: number
         Prefix?: string

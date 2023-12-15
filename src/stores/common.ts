@@ -1,7 +1,4 @@
 import type { NavDataOrigin } from '~/utils/router'
-import { commonRequests } from '~/requests/common/common.request'
-import { resHandler } from '~/utils/http/handler'
-import { formatRoutes, routeMap } from '~/utils/router'
 import { useAuthToken } from '~/utils/token'
 import { useStorageLocale } from '~/utils/i18n'
 
@@ -41,7 +38,7 @@ export const useCommonStore = defineStore('common', () => {
         //         formattedRoutes.value = formatRoutes(res)
         //     },
         // })
-        await new Promise().resolve().then()
+        await Promise.resolve().then()
     }
 
     return {
