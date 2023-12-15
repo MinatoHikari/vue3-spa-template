@@ -1,21 +1,17 @@
 {
     "compilerOptions": {
+        "target": "esnext",
+        "jsx": "preserve",
+        "lib": ["DOM", "ESNext"],
         "baseUrl": ".",
         "module": "ESNext",
-        "target": "esnext",
-        "lib": ["DOM", "ESNext"],
-        "strict": true,
-        "jsx": "preserve",
-        "esModuleInterop": true,
-        "skipLibCheck": true,
         "moduleResolution": "node",
+        "paths": {
+            "~/*": ["src/*"],
+            "~doc/*": ["docs/*"],
+            "~github-markdown/*": ["node_modules/github-markdown-css/*"]
+        },
         "resolveJsonModule": true,
-        "noUnusedLocals": false,
-        "strictNullChecks": true,
-        "isolatedModules": true,
-        "noImplicitThis": true,
-        "forceConsistentCasingInFileNames": true,
-        "noImplicitAny": false,
         "types": [
             "vite/client",
             "vite-plugin-pages/client",
@@ -23,11 +19,15 @@
             "unplugin-icons/types/vue",
             "@types/js-cookie"
         ],
-        "paths": {
-            "~/*": ["src/*"],
-            "~doc/*": ["docs/*"],
-            "~github-markdown/*": ["node_modules/github-markdown-css/*"]
-        }
+        "strict": true,
+        "strictNullChecks": true,
+        "noImplicitAny": false,
+        "noImplicitThis": true,
+        "noUnusedLocals": false,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "isolatedModules": true,
+        "skipLibCheck": true
     },
     "exclude": ["dist", "node_modules"]
 }

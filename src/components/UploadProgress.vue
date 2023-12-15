@@ -1,3 +1,15 @@
+<script setup lang="ts">
+import { useUserStore } from '~/stores/user'
+
+const userStore = useUserStore()
+
+const { showUploadProgress } = storeToRefs(userStore)
+const fileList = computed(() => userStore.uploadList)
+function clearFinish() {
+    userStore.uploadList = userStore.uploadList.filter(i => i.percentage < 100)
+}
+</script>
+
 <template>
     <n-popover
         v-model:show="showUploadProgress"
@@ -17,7 +29,9 @@
         </template>
         <n-space justify="space-between">
             <span font-bold>上传列表</span>
-            <n-button size="small" @click="clearFinish">清除已完成</n-button>
+            <n-button size="small" @click="clearFinish">
+                清除已完成
+            </n-button>
         </n-space>
         <n-list>
             <n-list-item v-for="item in fileList" :key="item.id">
@@ -39,15 +53,3 @@
         </n-list>
     </n-popover>
 </template>
-
-<script setup lang="ts">
-import { useUserStore } from '~/stores/user';
-
-const userStore = useUserStore();
-
-const { showUploadProgress } = storeToRefs(userStore);
-const fileList = computed(() => userStore.uploadList);
-const clearFinish = () => {
-    userStore.uploadList = userStore.uploadList.filter((i) => i.percentage < 100);
-};
-</script>

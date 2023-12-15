@@ -1,19 +1,16 @@
-import type { MaybeRefOrGetter } from '@vueuse/core';
-import type { InputNumberProps } from 'naive-ui';
-import { NInputNumber } from 'naive-ui';
-import type { ComponentPublicInstance } from 'vue';
-import type { EnhanceRow } from '~/composables/useNTableEnhance/useNTableEnhance';
-import { functionRefWrapper } from '~/utils/helper';
+import type { MaybeRefOrGetter } from '@vueuse/core'
+import type { InputNumberProps } from 'naive-ui'
+import { NInputNumber } from 'naive-ui'
+import type { ComponentPublicInstance } from 'vue'
+import type { EnhanceRow } from '~/composables/useNTableEnhance/useNTableEnhance'
+import { functionRefWrapper } from '~/utils/helper'
 
-export const useEditableInputÏCell = <Row extends Record<string, unknown>>(
-    rowData: EnhanceRow<Row>,
-    key: keyof Row,
-) => {
-    const itemProps = ref<InputNumberProps>({});
+export function useEditableInputÏCell<Row extends Record<string, unknown>>(rowData: EnhanceRow<Row>, key: keyof Row) {
+    const itemProps = ref<InputNumberProps>({})
 
     const defineItemProps = (props: MaybeRefOrGetter<InputNumberProps>) => {
-        (itemProps.value as InputNumberProps) = resolveUnref(props);
-    };
+        (itemProps.value as InputNumberProps) = resolveUnref(props)
+    }
 
     const EditableInputCell = defineComponent({
         props: enhanceTableCommonCellProps,
@@ -31,35 +28,35 @@ export const useEditableInputÏCell = <Row extends Record<string, unknown>>(
                         ref: functionRefWrapper(inputRef, {
                             changeOnlyWhenVmExist: true,
                             callback: (vm) => {
-                                inputRef.value = vm as InstanceType<typeof NInputNumber>;
-                                emit('refUpdate', vm as ComponentPublicInstance);
+                                inputRef.value = vm as InstanceType<typeof NInputNumber>
+                                emit('refUpdate', vm as ComponentPublicInstance)
                             },
                         }),
                         onUpdateValue: (v) => {
-                            handleEffect(v, false);
+                            handleEffect(v, false)
                         },
                         onKeyup: (e) => {
                             if (e.key === 'Enter') {
                                 handleEffect(undefined, true).then(() => {
-                                    emit('editingUpdate', false);
-                                });
+                                    emit('editingUpdate', false)
+                                })
                             }
                         },
                         ...itemProps.value,
-                    });
+                    })
                 },
                 wrapperProps: {
                     ...attrs,
                 },
                 revertOnBlur: p.revertOnBlur,
-            });
+            })
 
-            return () => (p.isEditing ? h(cm) : h('div', {}, [rowData[key] as string]));
+            return () => (p.isEditing ? h(cm) : h('div', {}, [rowData[key] as string]))
         },
-    });
+    })
 
     return {
         EditableInputCell,
         defineItemProps,
-    };
-};
+    }
+}

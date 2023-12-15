@@ -1,30 +1,30 @@
-import { useVDR } from 'v-demi-request';
-import { useUserStore } from '../../../../stores/user';
-import { baseUrl, getRequest } from '~/utils/http/request';
-import { useResponseHandler } from '~/utils/http/handler';
-import { useCommonStore } from '~/stores/common';
+import { useVDR } from 'v-demi-request'
+import { useUserStore } from '../../../../stores/user'
+import { baseUrl, getRequest } from '~/utils/http/request'
+import { useResponseHandler } from '~/utils/http/handler'
+import { useCommonStore } from '~/stores/common'
 
 export interface LoginParams {
-    username: string;
-    password: string;
-    verCodeKey: string;
-    code: string;
+    username: string
+    password: string
+    verCodeKey: string
+    code: string
 }
 
 export interface VerifyCodeResponse {
-    img: string;
-    verCodeKey: string;
+    img: string
+    verCodeKey: string
 }
 
-export const useLoginRequests = () => {
-    const { postRequest } = useApis();
-    const { handler } = useResponseHandler();
-    const commonStore = useCommonStore();
-    const userStore = useUserStore();
-    const router = useRouter();
-    const errHook = createEventHook();
-    const { t } = useTypedI18n();
-    const { homepage } = useHomePage();
+export function useLoginRequests() {
+    const { postRequest } = useApis()
+    const { handler } = useResponseHandler()
+    const commonStore = useCommonStore()
+    const userStore = useUserStore()
+    const router = useRouter()
+    const errHook = createEventHook()
+    const { t } = useTypedI18n()
+    const { homepage } = useHomePage()
 
     return {
         login: async (data: LoginParams) => {
@@ -48,24 +48,24 @@ export const useLoginRequests = () => {
 
             return await handler(result, {
                 onSuccess: async ({ res }) => {
-                    commonStore.setAuthToken(res);
+                    commonStore.setAuthToken(res)
 
                     // await userStore.getUserInfo();
 
                     // await commonStore.reFetchRoutes();
 
-                    await router.push(homepage.value);
+                    await router.push(homepage.value)
                 },
                 onError: () => {
-                    errHook.trigger({});
+                    errHook.trigger({})
                 },
                 successMessage: t('request.auth.login_success'),
-            });
+            })
         },
         onLoginError: errHook.on,
         verifyCode: () => {
-            const verifyCodeUrl = ref('');
-            const verCodeKey = ref('');
+            const verifyCodeUrl = ref('')
+            const verCodeKey = ref('')
             const { onSuccess, send: refreshVerifyCode } = useVDR(
                 `${baseUrl}/verifyCode`,
                 (url: string) => getRequest<undefined, VerifyCodeResponse>(url),
@@ -73,20 +73,20 @@ export const useLoginRequests = () => {
                     immediate: false,
                     retry: true,
                 },
-            );
+            )
             onSuccess((param) => {
                 handler(param, {
                     onSuccess: ({ res }) => {
-                        verifyCodeUrl.value = `data:image/jpg;base64,${res.img}`;
-                        verCodeKey.value = res.verCodeKey ?? '';
+                        verifyCodeUrl.value = `data:image/jpg;base64,${res.img}`
+                        verCodeKey.value = res.verCodeKey ?? ''
                     },
-                });
-            });
+                })
+            })
             return {
                 verifyCodeUrl,
                 verCodeKey,
                 refreshVerifyCode,
-            };
+            }
         },
-    };
-};
+    }
+}

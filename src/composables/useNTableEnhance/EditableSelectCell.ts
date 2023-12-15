@@ -1,19 +1,16 @@
-import type { MaybeRefOrGetter } from '@vueuse/core';
-import type { SelectProps } from 'naive-ui';
-import { NSelect } from 'naive-ui';
-import type { ComponentPublicInstance } from 'vue';
-import type { EnhanceRow } from '~/composables/useNTableEnhance/useNTableEnhance';
-import { functionRefWrapper } from '~/utils/helper';
+import type { MaybeRefOrGetter } from '@vueuse/core'
+import type { SelectProps } from 'naive-ui'
+import { NSelect } from 'naive-ui'
+import type { ComponentPublicInstance } from 'vue'
+import type { EnhanceRow } from '~/composables/useNTableEnhance/useNTableEnhance'
+import { functionRefWrapper } from '~/utils/helper'
 
-export const useEditableSelectCell = <Row extends Record<string, unknown>>(
-    rowData: EnhanceRow<Row>,
-    key: keyof Row,
-) => {
-    const itemProps = ref<SelectProps>({});
+export function useEditableSelectCell<Row extends Record<string, unknown>>(rowData: EnhanceRow<Row>, key: keyof Row) {
+    const itemProps = ref<SelectProps>({})
 
     const defineItemProps = (props: MaybeRefOrGetter<SelectProps>) => {
-        (itemProps.value as SelectProps) = resolveUnref(props);
-    };
+        (itemProps.value as SelectProps) = resolveUnref(props)
+    }
 
     const EditableSelectCell = defineComponent({
         props: enhanceTableCommonCellProps,
@@ -29,30 +26,30 @@ export const useEditableSelectCell = <Row extends Record<string, unknown>>(
                         ref: functionRefWrapper(inputRef, {
                             changeOnlyWhenVmExist: true,
                             callback: (vm) => {
-                                inputRef.value = vm as InstanceType<typeof NSelect>;
-                                emit('refUpdate', vm as ComponentPublicInstance);
+                                inputRef.value = vm as InstanceType<typeof NSelect>
+                                emit('refUpdate', vm as ComponentPublicInstance)
                             },
                         }),
                         onUpdateValue: (e) => {
                             handleEffect(e, true).then(() => {
-                                emit('editingUpdate', false);
-                            });
+                                emit('editingUpdate', false)
+                            })
                         },
                         ...(itemProps.value as SelectProps),
-                    });
+                    })
                 },
                 wrapperProps: {
                     ...attrs,
                 },
                 revertOnBlur: p.revertOnBlur,
-            });
+            })
 
-            return () => (p.isEditing ? h(cm) : h('div', {}, [(rowData[key] as string) ?? '']));
+            return () => (p.isEditing ? h(cm) : h('div', {}, [(rowData[key] as string) ?? '']))
         },
-    });
+    })
 
     return {
         EditableSelectCell,
         defineItemProps,
-    };
-};
+    }
+}

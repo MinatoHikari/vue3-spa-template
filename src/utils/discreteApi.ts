@@ -1,5 +1,5 @@
-import { createDiscreteApi } from 'naive-ui';
-import theme from '../styles/naive-ui-theme-overrides.json';
+import { createDiscreteApi } from 'naive-ui'
+import theme from '../styles/naive-ui-theme-overrides.json'
 
 export const {
     message: globalMessage,
@@ -10,4 +10,4 @@ export const {
     configProviderProps: {
         themeOverrides: theme,
     },
-});
+})

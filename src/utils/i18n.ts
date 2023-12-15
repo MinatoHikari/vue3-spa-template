@@ -1,27 +1,27 @@
-import { createI18n } from 'vue-i18n';
-import type { Ref } from 'vue';
+import { createI18n } from 'vue-i18n'
+import type { Ref } from 'vue'
 
-import zhCN from '../../locales/zh-CN';
-import enUS from '../../locales/en-US';
-import deDE from '../../locales/de-DE';
-import frFR from '../../locales/fr-FR';
-import { Locales } from '~/composables/i18n';
-import { setDayjsLocale } from '~/composables/useDayjs';
-import { commonRequests } from '~/requests/common/common.request';
-import { resHandler } from '~/utils/http/handler';
-import { useCommonStore } from '~/stores/common';
+import zhCN from '../../locales/zh-CN'
+import enUS from '../../locales/en-US'
+import deDE from '../../locales/de-DE'
+import frFR from '../../locales/fr-FR'
+import { Locales } from '~/composables/i18n'
+import { setDayjsLocale } from '~/composables/useDayjs'
+import { commonRequests } from '~/requests/common/common.request'
+import { resHandler } from '~/utils/http/handler'
+import { useCommonStore } from '~/stores/common'
 
 export const useStorageLocale = createGlobalState(() => {
     const defaultLocale = useStorage('locale', ref<Locales>(Locales.zhCN), localStorage, {
         deep: true,
         writeDefaults: true,
         listenToStorageChanges: true,
-    }) as Ref<Locales>;
+    }) as Ref<Locales>
 
     return {
         defaultLocale,
-    };
-});
+    }
+})
 
 export const i18n = createI18n({
     legacy: false,
@@ -32,30 +32,30 @@ export const i18n = createI18n({
         [Locales.frFR]: frFR,
     },
     allowComposition: true,
-});
+})
 
-export const { global: i18nGlobal } = i18n;
+export const { global: i18nGlobal } = i18n
 
-const i18nScope = effectScope();
+const i18nScope = effectScope()
 
-export const initI18nScope = () => {
+export function initI18nScope() {
     i18nScope.run(() => {
-        const { defaultLocale: locale } = useStorageLocale();
-        const store = useCommonStore();
+        const { defaultLocale: locale } = useStorageLocale()
+        const store = useCommonStore()
 
-        i18nGlobal.locale.value = locale.value;
+        i18nGlobal.locale.value = locale.value
 
-        setDayjsLocale(locale.value);
+        setDayjsLocale(locale.value)
 
         watch(locale, async (val) => {
-            store.locale = val;
-            setDayjsLocale(val);
+            store.locale = val
+            setDayjsLocale(val)
 
             if (store.authToken) {
-                const res = await commonRequests.switchLang();
-                await resHandler(res);
-                await store.reFetchRoutes();
+                const res = await commonRequests.switchLang()
+                await resHandler(res)
+                await store.reFetchRoutes()
             }
-        });
-    });
-};
+        })
+    })
+}

@@ -1,5 +1,5 @@
 export const useRouteSearchDialog = createGlobalState(() => {
-    const { t } = useTypedI18n();
+    const { t } = useTypedI18n()
     const {
         dialogVisible,
         dialogPropData,
@@ -10,7 +10,7 @@ export const useRouteSearchDialog = createGlobalState(() => {
         dialogTitle,
     } = useDialogStates({
         title: () => t('page.global.page_search'),
-    });
+    })
 
     return {
         dialogVisible,
@@ -20,7 +20,7 @@ export const useRouteSearchDialog = createGlobalState(() => {
         handleAfterLeave,
         handleAfterEnter,
         dialogTitle,
-    };
-});
+    }
+})
 
 export const routerSearchName = Symbol('routerSearch')

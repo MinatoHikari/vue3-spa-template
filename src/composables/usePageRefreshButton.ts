@@ -1,13 +1,10 @@
-import { NIcon } from 'naive-ui';
-import RenewIcon from '~icons/carbon/renew';
+import { NIcon } from 'naive-ui'
+import RenewIcon from '~icons/carbon/renew'
 
-export const usePageRefreshButton = (
-    name: Symbol,
-    onClick: (e?: MouseEvent) => void | Promise<void>,
-) => {
-    const { t } = useTypedI18n();
+export function usePageRefreshButton(name: symbol, onClick: (e?: MouseEvent) => void | Promise<void>) {
+    const { t } = useTypedI18n()
 
-    const { addPageButton } = useTabSuffix();
+    const { addPageButton } = useTabSuffix()
     const initRefreshButton = () => {
         addPageButton({
             name,
@@ -21,12 +18,12 @@ export const usePageRefreshButton = (
                     },
                 ),
             toolTipContent: computed(() => t('button.refresh')),
-        });
-    };
+        })
+    }
     onMounted(() => {
-        initRefreshButton();
-    });
+        initRefreshButton()
+    })
     onActivated(() => {
-        initRefreshButton();
-    });
-};
+        initRefreshButton()
+    })
+}

@@ -1,8 +1,23 @@
+<script lang="ts" setup name="AuthLogin">
+import { useForm } from '~/pages/auth/login/modules/useForm'
+import { useVerifyCode } from '~/pages/auth/login/modules/useVerifyCode'
+
+const { formData, login, onLoginError } = useForm()
+
+const { verifyCodeUrl, refreshVerifyCode } = useVerifyCode()
+
+onLoginError(() => {
+    refreshVerifyCode()
+})
+</script>
+
 <template>
     <div class="page-container">
         <n-space justify="center" align="center">
             <div w-100 mt-30>
-                <div text-center font-bold text-2xl>{{ $t('auth.login') }}</div>
+                <div text-center font-bold text-2xl>
+                    {{ $t('auth.login') }}
+                </div>
                 <div text-left>
                     <n-form-item :label="$t('auth.username')">
                         <n-input
@@ -51,19 +66,6 @@
         </n-space>
     </div>
 </template>
-
-<script lang="ts" setup name="AuthLogin">
-import { useForm } from '~/pages/auth/login/modules/useForm';
-import { useVerifyCode } from '~/pages/auth/login/modules/useVerifyCode';
-
-const { formData, login, onLoginError } = useForm();
-
-const { verifyCodeUrl, refreshVerifyCode } = useVerifyCode();
-
-onLoginError(() => {
-    refreshVerifyCode();
-});
-</script>
 
 <style scoped>
 .n-card {

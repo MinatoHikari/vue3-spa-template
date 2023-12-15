@@ -1,25 +1,7 @@
-<template>
-    <n-grid w-full v-bind="{ ...$attrs, ...$props }">
-        <n-gi v-bind="props.leftProps" class="toolbar-left">
-            <n-space>
-                <span v-if="title || $slots.title" class="tool-bar-title">
-                    <slot name="title" />
-                </span>
-                <slot name="left" />
-            </n-space>
-        </n-gi>
-        <n-gi v-bind="props.rightProps" class="toolbar-right">
-            <n-space justify="end">
-                <slot name="right" />
-            </n-space>
-        </n-gi>
-    </n-grid>
-</template>
-
 <script setup lang="ts" name="ToolBar">
-import type { GridItemProps } from 'naive-ui';
-import { spaceProps } from 'naive-ui';
-import type { PropType } from 'vue';
+import type { GridItemProps } from 'naive-ui'
+import { spaceProps } from 'naive-ui'
+import type { PropType } from 'vue'
 
 const props = defineProps({
     ...spaceProps,
@@ -42,8 +24,26 @@ const props = defineProps({
     title: {
         type: String,
     },
-});
+})
 </script>
+
+<template>
+    <n-grid w-full v-bind="{ ...$attrs, ...$props }">
+        <n-gi v-bind="props.leftProps" class="toolbar-left">
+            <n-space>
+                <span v-if="title || $slots.title" class="tool-bar-title">
+                    <slot name="title" />
+                </span>
+                <slot name="left" />
+            </n-space>
+        </n-gi>
+        <n-gi v-bind="props.rightProps" class="toolbar-right">
+            <n-space justify="end">
+                <slot name="right" />
+            </n-space>
+        </n-gi>
+    </n-grid>
+</template>
 
 <style lang="postcss" scoped>
 .toolbar-right :deep(.n-button:not(:nth-last-child(1))) {

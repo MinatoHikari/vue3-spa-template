@@ -1,3 +1,52 @@
+<script setup lang="ts" name="doc-container">
+import { NMenu } from 'naive-ui'
+import type { MenuGroupOption, MenuOption } from 'naive-ui'
+import { RouterLink } from 'vue-router'
+import '~github-markdown/github-markdown.css'
+import { functionRefWrapper } from '~/utils/helper'
+import type { NavDataOrigin } from '~/utils/router'
+import { deNormalizePath, normalizePath, routes } from '~/utils/router'
+
+// console.log(styles);
+const route = useRoute()
+
+const collapsed = ref(false)
+const menu = ref<InstanceType<typeof NMenu> | null>(null)
+const setMenu = functionRefWrapper(menu)
+const selectedMenu = computed(() => deNormalizePath(route.path))
+function renderLabel(item: MenuOption | MenuGroupOption) {
+    const option = item as NavDataOrigin
+    if (option.children)
+        return h('div', () => option.meta?.title)
+    return h(
+        RouterLink,
+        {
+            to: normalizePath(option.key as string).replaceAll('/index', '') ?? '/docs',
+        },
+        () => option.label,
+    )
+}
+function handleUpdateValue(key: string, item: MenuOption) {
+    const option = item as NavDataOrigin
+    console.log(option)
+}
+console.log(routes)
+const menuOptions = routes
+    .reverse()
+    .filter(i => i.path.includes('/docs'))
+    .map((i) => {
+        if (i.children && i.children[0]) {
+            const item = i.children[0]
+            return {
+                label: item.meta?.name,
+                key: item.name,
+            } as MenuOption
+        }
+        return {}
+    })
+console.log(menuOptions)
+</script>
+
 <template>
     <div>
         <main class="doc">
@@ -56,53 +105,5 @@
         </main>
     </div>
 </template>
-
-<script setup lang="ts" name="doc-container">
-import { NMenu } from 'naive-ui';
-import type { MenuGroupOption, MenuOption } from 'naive-ui';
-import { RouterLink } from 'vue-router';
-import '~github-markdown/github-markdown.css';
-import { functionRefWrapper } from '~/utils/helper';
-import type { NavDataOrigin } from '~/utils/router';
-import { deNormalizePath, normalizePath, routes } from '~/utils/router';
-
-// console.log(styles);
-const route = useRoute();
-
-const collapsed = ref(false);
-const menu = ref<InstanceType<typeof NMenu> | null>(null);
-const setMenu = functionRefWrapper(menu);
-const selectedMenu = computed(() => deNormalizePath(route.path));
-const renderLabel = (item: MenuOption | MenuGroupOption) => {
-    const option = item as NavDataOrigin;
-    if (option.children) return h('div', () => option.meta?.title);
-    return h(
-        RouterLink,
-        {
-            to: normalizePath(option.key as string).replaceAll('/index', '') ?? '/docs',
-        },
-        () => option.label,
-    );
-};
-const handleUpdateValue = (key: string, item: MenuOption) => {
-    const option = item as NavDataOrigin;
-    console.log(option);
-};
-console.log(routes);
-const menuOptions = routes
-    .reverse()
-    .filter((i) => i.path.includes('/docs'))
-    .map((i) => {
-        if (i.children && i.children[0]) {
-            const item = i.children[0];
-            return {
-                label: item.meta?.name,
-                key: item.name,
-            } as MenuOption;
-        }
-        return {};
-    });
-console.log(menuOptions);
-</script>
 
 <style scoped></style>

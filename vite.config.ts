@@ -1,41 +1,42 @@
 /// <reference types="vitest" />
 
-import path from 'node:path';
-import { defineConfig } from 'vitest/config';
-import Vue from '@vitejs/plugin-vue';
-import type { PageOptions } from 'vite-plugin-pages';
-import Pages from 'vite-plugin-pages';
-import Markdown from 'vite-plugin-vue-markdown';
-import Components from 'unplugin-vue-components/vite';
-import AutoImport from 'unplugin-auto-import/vite';
-import Layouts from 'vite-plugin-vue-layouts';
-import Unocss from 'unocss/vite';
-import vueJsx from '@vitejs/plugin-vue-jsx';
-import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
-import VueI18n from '@intlify/unplugin-vue-i18n/vite';
-import svgLoader from 'vite-svg-loader';
-import vueSetupExtend from 'vite-plugin-vue-setup-extend';
-import { loadEnv } from 'vite';
-import Icons from 'unplugin-icons/vite';
-import IconsResolver from 'unplugin-icons/resolver';
-import { FileSystemIconLoader } from 'unplugin-icons/loaders';
-import legacy from '@vitejs/plugin-legacy';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import path from 'node:path'
+import process from 'node:process'
+import { defineConfig } from 'vitest/config'
+import Vue from '@vitejs/plugin-vue'
+import type { PageOptions } from 'vite-plugin-pages'
+import Pages from 'vite-plugin-pages'
+import Markdown from 'unplugin-vue-markdown/vite'
+import Components from 'unplugin-vue-components/vite'
+import AutoImport from 'unplugin-auto-import/vite'
+import Layouts from 'vite-plugin-vue-layouts'
+import Unocss from 'unocss/vite'
+import vueJsx from '@vitejs/plugin-vue-jsx'
+import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
+import VueI18n from '@intlify/unplugin-vue-i18n/vite'
+import svgLoader from 'vite-svg-loader'
+import vueSetupExtend from 'vite-plugin-vue-setup-extend'
+import { loadEnv } from 'vite'
+import Icons from 'unplugin-icons/vite'
+import IconsResolver from 'unplugin-icons/resolver'
+import { FileSystemIconLoader } from 'unplugin-icons/loaders'
+import legacy from '@vitejs/plugin-legacy'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // import FileToBase64 from './vite-plugin-file-to-base64';
-import generateProxySettings from './scripts/generateProxySettings';
-import ComponentName from './vite-plugins/vite-plugin-component-name';
+import generateProxySettings from './scripts/generateProxySettings'
+import ComponentName from './vite-plugins/vite-plugin-component-name'
 
 export default defineConfig(({ mode }) => {
-    const envDir = `${process.cwd()}/viteEnv`;
-    const env = loadEnv(mode, envDir, '');
-    const isLocal = env.LOCAL === '1';
-    process.env.BROWSER = env.BROWSER ?? '';
-    const pageDirs: (string | PageOptions)[] = ['src/pages'];
-    const layoutsDirs: string[] = ['src/layouts', 'src/layouts/**'];
+    const envDir = `${process.cwd()}/viteEnv`
+    const env = loadEnv(mode, envDir, '')
+    const isLocal = env.LOCAL === '1'
+    process.env.BROWSER = env.BROWSER ?? ''
+    const pageDirs: (string | PageOptions)[] = ['src/pages']
+    const layoutsDirs: string[] = ['src/layouts', 'src/layouts/**']
     if (mode === 'development') {
-        pageDirs.push({ dir: 'docs', baseRoute: '/docs' });
-        layoutsDirs.push('docs/layouts');
+        pageDirs.push({ dir: 'docs', baseRoute: '/docs' })
+        layoutsDirs.push('docs/layouts')
     }
     return {
         envDir,
@@ -109,7 +110,6 @@ export default defineConfig(({ mode }) => {
             VueI18n({
                 runtimeOnly: true,
                 compositionOnly: true,
-                include: [path.resolve(__dirname, 'locales/**')],
             }),
 
             // https://github.com/antfu/vite-plugin-components
@@ -119,9 +119,8 @@ export default defineConfig(({ mode }) => {
                     NaiveUiResolver(),
                     IconsResolver(),
                     (componentName) => {
-                        if (componentName === 'FormCreator') {
-                            return { name: componentName, from: 'navuelidate' };
-                        }
+                        if (componentName === 'FormCreator')
+                            return { name: componentName, from: 'navuelidate' }
                     },
                 ],
             }),
@@ -133,9 +132,8 @@ export default defineConfig(({ mode }) => {
             Icons({
                 compiler: 'vue3',
                 customCollections: {
-                    'assets-icons': FileSystemIconLoader('src/assets/icons', (svg) =>
-                        svg.replace(/^<svg /, '<svg fill="currentColor" '),
-                    ),
+                    'assets-icons': FileSystemIconLoader('src/assets/icons', svg =>
+                        svg.replace(/^<svg /, '<svg fill="currentColor" ')),
                 },
             }),
 
@@ -166,5 +164,5 @@ export default defineConfig(({ mode }) => {
                 inline: ['@vue', '@vueuse', 'vue-demi'],
             },
         },
-    };
-});
+    }
+})

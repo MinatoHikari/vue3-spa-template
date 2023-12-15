@@ -10,4 +10,4 @@ export default {
         logout: 'Logout',
         logout_success: 'Logout success',
     },
-};
+}

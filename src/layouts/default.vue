@@ -1,3 +1,240 @@
+<script lang="ts">
+import type { Ref } from 'vue'
+import type { MenuGroupOption, MenuOption, NMenu } from 'naive-ui'
+import { NEllipsis, NIcon, NTooltip } from 'naive-ui'
+import { RouterLink } from 'vue-router'
+import { useUserStore } from '../stores/user'
+import { routerSearchName, useRouteSearchDialog } from './default-modules/routeSearchDialog'
+import RouteSearch from './default-modules/routeSearch.vue'
+import { getIcon } from './default-modules/icon'
+import { useCommonStore } from '~/stores/common'
+import { AuthFailedType, navigationGuard } from '~/utils/navigationGuard'
+import type { NavDataOrigin } from '~/utils/router'
+import { RouteType, formatRoutes, routeMap } from '~/utils/router'
+import { functionRefWrapper } from '~/utils/helper'
+import Logo from '~icons/assets-icons/logo'
+import Search from '~icons/carbon/search'
+import { layoutSiderThemeOverrides, tabStyle } from '~/layouts/default-modules/theme'
+
+const fallbackHomePage = import.meta.env.VITE_HOMEPAGE_FALLBACK
+
+export default defineComponent({
+    components: { Logo, RouteSearch },
+    beforeRouteEnter(to, from, next) {
+        navigationGuard<NavDataOrigin[]>(to, from, next, {
+            onSourceFetch: async () => {
+                // const { getUserInfo } = useUserStore();
+                // await getUserInfo();
+                // const res = await commonRequests.getRoutes();
+                // const isSuccess = await resHandler(res, {});
+                // if (!isSuccess) throw new Error('route fetch failed');
+                // return res.res as NavDataOrigin[];
+                return []
+            },
+            sourceFormatter: async (source) => {
+                routeMap.clear()
+                return formatRoutes(source)
+            },
+            routerAuth: async (to) => {
+                const commonStore = useCommonStore()
+                commonStore.currentRouteKey = to.path
+                const validateRes = routeMap.has(commonStore.currentRouteKey)
+                console.log(
+                    'route auth result:',
+                    validateRes,
+                    '\npath:',
+                    commonStore.currentRouteKey,
+                )
+                // return validateRes;
+                return true
+            },
+            onAuthFailed: (type) => {
+                if (type === AuthFailedType.Route)
+                    next('/403')
+
+                if (type === AuthFailedType.Session)
+                    next('/auth/login')
+            },
+            onAuthSuccess: async () => {
+                next()
+            },
+            excludeRoutes: [fallbackHomePage, '404', '403'],
+        })
+    },
+    setup() {
+        const isDev = import.meta.env.MODE === 'development'
+        const globalLanguage = useGlobalLanguage()
+        const commonStore = useCommonStore()
+        const uerStore = useUserStore()
+        const { cachedRouteList } = storeToRefs(commonStore)
+
+        const uploadFileListLength = computed(() => uerStore.uploadList.length)
+
+        const { suffixList, addPageButton } = useTabSuffix()
+
+        const showFooter = ref(false)
+
+        const { dialogVisible, dialogTitle, events, open } = useRouteSearchDialog()
+        useEventListener(window, 'keyup', (e) => {
+            if (e.key === '/' && e.ctrlKey)
+                open()
+        })
+
+        const menuOptions = computed(() => commonStore.formattedRoutes)
+        const menuOptionsMap = computed(() => {
+            const map = new Map<string, MenuOption[]>()
+            menuOptions.value.forEach((i) => {
+                map.set(i.key as string, i.children as MenuOption[])
+            })
+            return map
+        })
+        const menuOptionsMain = computed(() =>
+            (menuOptions as Ref<MenuOption[]>).value.map((i) => {
+                const res = { ...i }
+                delete res.children
+                return res
+            }),
+        )
+        const mainSelected = ref(
+            routeMap.get(commonStore.currentRouteKey)?.rootKey
+            ?? menuOptionsMain.value[0]?.key
+            ?? '',
+        )
+        const selectedMenu = computed(() => commonStore.currentRouteKey ?? '')
+        const mainCollapsed = ref(false)
+        const subCollapsed = ref(false)
+        const menu = ref<InstanceType<typeof NMenu> | null>(null)
+        const setMenu = functionRefWrapper(menu)
+
+        const handleUpdateValue = (key: string, item: MenuOption) => {
+            const option = item as NavDataOrigin
+            console.log(option)
+            commonStore.currentRouteKey = key
+        }
+
+        const renderMainLabel = (item: MenuOption | MenuGroupOption) => {
+            const option = item as NavDataOrigin
+            return h(
+                NTooltip,
+                { placement: 'right' },
+                {
+                    default: () => option.meta?.title ?? option.label,
+                    trigger: () =>
+                        h('div', { class: 'menu-icon-container' }, [
+                            h(
+                                'div',
+                                { class: 'menu-div' },
+                                h(NIcon, {
+                                    color: 'white',
+                                    component: getIcon(option.meta?.icon),
+                                    size: 24,
+                                }),
+                            ),
+                            // h('div', { class: 'menu-div' }, option.meta?.title ?? option.label),
+                        ]),
+                },
+            )
+        }
+
+        const renderSubLabel = (item: MenuOption | MenuGroupOption) => {
+            const option = item as NavDataOrigin
+            if (option.children)
+                return h('div', {}, h(NEllipsis, {}, { default: () => option.meta?.title }))
+
+            if (option.component === RouteType.InnerLink)
+                return h('a', { target: '_blank', href: option.path }, option.meta?.title)
+
+            return h(
+                NEllipsis,
+                {
+                    tooltip: {
+                        placement: 'right',
+                    },
+                },
+                {
+                    default: () =>
+                        h(
+                            RouterLink,
+                            {
+                                to: option.path ?? '',
+                            },
+                            () => option.meta?.title,
+                        ),
+                    tooltip: () => option.meta?.title,
+                },
+            )
+        }
+
+        const renderSubIcon = (item: MenuOption) => {
+            const option = item as NavDataOrigin
+            if (option.meta?.icon) {
+                return h(NIcon, {
+                    component: getIcon(option.meta.icon),
+                    style: {
+                        marginLeft: subCollapsed.value ? '8px' : '0',
+                    },
+                })
+            }
+            return undefined
+        }
+
+        watch(cachedRouteList, (val) => {
+            console.log('cachedRouteList', val)
+        })
+
+        watch(selectedMenu, (val) => {
+            menu.value?.showOption(val)
+        })
+
+        addPageButton({
+            name: routerSearchName,
+            renderIcon: () =>
+                h(
+                    NIcon,
+                    {},
+                    {
+                        default: () => h(Search),
+                    },
+                ),
+            onClick: () => {
+                dialogVisible.value = true
+            },
+            toolTipContent: () => dialogTitle.value,
+            detached: true,
+        })
+
+        return {
+            isDev,
+            showFooter,
+            menuOptionsMain,
+            menuOptionsSub: computed(
+                () => menuOptionsMap.value.get(mainSelected.value as string) ?? [],
+            ),
+            handleUpdateValue,
+            ...globalLanguage,
+            renderSubLabel,
+            renderSubIcon,
+            renderMainLabel,
+            mainSelected,
+            selectedMenu,
+            menu,
+            setMenu,
+            mainCollapsed,
+            subCollapsed,
+            cachedRouteList,
+            showMenu: computed(() => commonStore.showMenu),
+            layoutSiderThemeOverrides,
+            tabStyle,
+            dialogVisible,
+            dialogTitle,
+            events,
+            suffixList,
+            uploadFileListLength,
+        }
+    },
+})
+</script>
+
 <template>
     <main>
         <n-layout has-sider position="absolute" style="top: 0; bottom: 0">
@@ -96,7 +333,9 @@
                                         <n-icon size="24">
                                             <i-carbon-language />
                                         </n-icon>
-                                        <n-text ml-2>{{ nameMapRef.get(locale) }}</n-text>
+                                        <n-text ml-2>
+                                            {{ nameMapRef.get(locale) }}
+                                        </n-text>
                                     </n-button>
                                 </n-dropdown>
                                 <user-profile-menu />
@@ -176,242 +415,6 @@
         </n-modal>
     </main>
 </template>
-
-<script lang="ts">
-import type { Ref } from 'vue';
-import type { MenuGroupOption, MenuOption, NMenu } from 'naive-ui';
-import { NEllipsis, NIcon, NTooltip } from 'naive-ui';
-import { RouterLink } from 'vue-router';
-import { useUserStore } from '../stores/user';
-import { routerSearchName, useRouteSearchDialog } from './default-modules/routeSearchDialog';
-import RouteSearch from './default-modules/routeSearch.vue';
-import { getIcon } from './default-modules/icon';
-import { useCommonStore } from '~/stores/common';
-import { AuthFailedType, navigationGuard } from '~/utils/navigationGuard';
-import type { NavDataOrigin } from '~/utils/router';
-import { RouteType, formatRoutes, routeMap } from '~/utils/router';
-import { functionRefWrapper } from '~/utils/helper';
-import Logo from '~icons/assets-icons/logo';
-import Search from '~icons/carbon/search';
-import { layoutSiderThemeOverrides, tabStyle } from '~/layouts/default-modules/theme';
-
-const fallbackHomePage = import.meta.env.VITE_HOMEPAGE_FALLBACK;
-
-export default defineComponent({
-    components: { Logo, RouteSearch },
-    beforeRouteEnter(to, from, next) {
-        navigationGuard<NavDataOrigin[]>(to, from, next, {
-            onSourceFetch: async () => {
-                // const { getUserInfo } = useUserStore();
-                // await getUserInfo();
-                // const res = await commonRequests.getRoutes();
-                // const isSuccess = await resHandler(res, {});
-                // if (!isSuccess) throw new Error('route fetch failed');
-                // return res.res as NavDataOrigin[];
-                return [];
-            },
-            sourceFormatter: async (source) => {
-                routeMap.clear();
-                return formatRoutes(source);
-            },
-            routerAuth: async (to) => {
-                const commonStore = useCommonStore();
-                commonStore.currentRouteKey = to.path;
-                const validateRes = routeMap.has(commonStore.currentRouteKey);
-                console.log(
-                    'route auth result:',
-                    validateRes,
-                    '\npath:',
-                    commonStore.currentRouteKey,
-                );
-                // return validateRes;
-                return true;
-            },
-            onAuthFailed: (type) => {
-                if (type === AuthFailedType.Route) {
-                    next('/403');
-                }
-                if (type === AuthFailedType.Session) next('/auth/login');
-            },
-            onAuthSuccess: async () => {
-                next();
-            },
-            excludeRoutes: [fallbackHomePage, '404', '403'],
-        });
-    },
-    setup() {
-        const isDev = import.meta.env.MODE === 'development';
-        const globalLanguage = useGlobalLanguage();
-        const commonStore = useCommonStore();
-        const uerStore = useUserStore();
-        const { cachedRouteList } = storeToRefs(commonStore);
-
-        const uploadFileListLength = computed(() => uerStore.uploadList.length);
-
-        const { suffixList, addPageButton } = useTabSuffix();
-
-        const showFooter = ref(false);
-
-        const { dialogVisible, dialogTitle, events, open } = useRouteSearchDialog();
-        useEventListener(window, 'keyup', (e) => {
-            if (e.key === '/' && e.ctrlKey) {
-                open();
-            }
-        });
-
-        const menuOptions = computed(() => commonStore.formattedRoutes);
-        const menuOptionsMap = computed(() => {
-            const map = new Map<string, MenuOption[]>();
-            menuOptions.value.forEach((i) => {
-                map.set(i.key as string, i.children as MenuOption[]);
-            });
-            return map;
-        });
-        const menuOptionsMain = computed(() =>
-            (menuOptions as Ref<MenuOption[]>).value.map((i) => {
-                const res = { ...i };
-                delete res.children;
-                return res;
-            }),
-        );
-        const mainSelected = ref(
-            routeMap.get(commonStore.currentRouteKey)?.rootKey ??
-                menuOptionsMain.value[0]?.key ??
-                '',
-        );
-        const selectedMenu = computed(() => commonStore.currentRouteKey ?? '');
-        const mainCollapsed = ref(false);
-        const subCollapsed = ref(false);
-        const menu = ref<InstanceType<typeof NMenu> | null>(null);
-        const setMenu = functionRefWrapper(menu);
-
-        const handleUpdateValue = (key: string, item: MenuOption) => {
-            const option = item as NavDataOrigin;
-            console.log(option);
-            commonStore.currentRouteKey = key;
-        };
-
-        const renderMainLabel = (item: MenuOption | MenuGroupOption) => {
-            const option = item as NavDataOrigin;
-            return h(
-                NTooltip,
-                { placement: 'right' },
-                {
-                    default: () => option.meta?.title ?? option.label,
-                    trigger: () =>
-                        h('div', { class: 'menu-icon-container' }, [
-                            h(
-                                'div',
-                                { class: 'menu-div' },
-                                h(NIcon, {
-                                    color: 'white',
-                                    component: getIcon(option.meta?.icon),
-                                    size: 24,
-                                }),
-                            ),
-                            // h('div', { class: 'menu-div' }, option.meta?.title ?? option.label),
-                        ]),
-                },
-            );
-        };
-
-        const renderSubLabel = (item: MenuOption | MenuGroupOption) => {
-            const option = item as NavDataOrigin;
-            if (option.children) {
-                return h('div', {}, h(NEllipsis, {}, { default: () => option.meta?.title }));
-            }
-            if (option.component === RouteType.InnerLink) {
-                return h('a', { target: '_blank', href: option.path }, option.meta?.title);
-            }
-            return h(
-                NEllipsis,
-                {
-                    tooltip: {
-                        placement: 'right',
-                    },
-                },
-                {
-                    default: () =>
-                        h(
-                            RouterLink,
-                            {
-                                to: option.path ?? '',
-                            },
-                            () => option.meta?.title,
-                        ),
-                    tooltip: () => option.meta?.title,
-                },
-            );
-        };
-
-        const renderSubIcon = (item: MenuOption) => {
-            const option = item as NavDataOrigin;
-            if (option.meta?.icon)
-                return h(NIcon, {
-                    component: getIcon(option.meta.icon),
-                    style: {
-                        marginLeft: subCollapsed.value ? '8px' : '0',
-                    },
-                });
-            return undefined;
-        };
-
-        watch(cachedRouteList, (val) => {
-            console.log('cachedRouteList', val);
-        });
-
-        watch(selectedMenu, (val) => {
-            menu.value?.showOption(val);
-        });
-
-        addPageButton({
-            name: routerSearchName,
-            renderIcon: () =>
-                h(
-                    NIcon,
-                    {},
-                    {
-                        default: () => h(Search),
-                    },
-                ),
-            onClick: () => {
-                dialogVisible.value = true;
-            },
-            toolTipContent: () => dialogTitle.value,
-            detached: true,
-        });
-
-        return {
-            isDev,
-            showFooter,
-            menuOptionsMain,
-            menuOptionsSub: computed(
-                () => menuOptionsMap.value.get(mainSelected.value as string) ?? [],
-            ),
-            handleUpdateValue,
-            ...globalLanguage,
-            renderSubLabel,
-            renderSubIcon,
-            renderMainLabel,
-            mainSelected,
-            selectedMenu,
-            menu,
-            setMenu,
-            mainCollapsed,
-            subCollapsed,
-            cachedRouteList,
-            showMenu: computed(() => commonStore.showMenu),
-            layoutSiderThemeOverrides,
-            tabStyle,
-            dialogVisible,
-            dialogTitle,
-            events,
-            suffixList,
-            uploadFileListLength,
-        };
-    },
-});
-</script>
 
 <style scoped>
 .container-bg {

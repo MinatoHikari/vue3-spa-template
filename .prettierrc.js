@@ -23,7 +23,7 @@ module.exports = {
     arrowParens: 'always',
     // 每个文件格式化的范围是文件的全部内容
     rangeStart: 0,
-    rangeEnd: Infinity,
+    rangeEnd: Number.POSITIVE_INFINITY,
     // 不需要写文件开头的 @prettier
     requirePragma: false,
     // 不需要自动在文件开头插入 @prettier
@@ -34,4 +34,4 @@ module.exports = {
     htmlWhitespaceSensitivity: 'ignore',
     // 换行符使用 lf
     endOfLine: 'lf',
-};
+}

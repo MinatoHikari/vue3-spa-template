@@ -1,7 +1,33 @@
+<script setup lang="ts">
+import type { FunctionalComponent, PropType } from 'vue'
+import type { StatusCardItem } from './types'
+
+type Item = StatusCardItem
+
+const props = defineProps({
+    icon: Object as PropType<FunctionalComponent>,
+    data: [Object, Array] as PropType<Item | [Item, Item]>,
+})
+
+const isItemArray = computed(() => Array.isArray(props.data))
+
+const AvatarIcon = props.icon
+
+const nameTop = templateRef<HTMLElement>('nameTop')
+
+const { width: topWidth } = useElementSize(nameTop)
+
+const ellipsisWidth = computed(() => {
+    return `${topWidth.value - 105}px`
+})
+</script>
+
 <template>
     <n-space ref="nameTop" h-full justify="space-between" align="center" v-bind="$attrs">
         <n-space align="center">
-            <n-icon flex size="55"><AvatarIcon /></n-icon>
+            <n-icon flex size="55">
+                <AvatarIcon />
+            </n-icon>
             <div text-gray-500 font-bold>
                 <div>
                     <RouterLink
@@ -41,29 +67,5 @@
         </div>
     </n-space>
 </template>
-
-<script setup lang="ts">
-import type { FunctionalComponent, PropType } from 'vue';
-import type { StatusCardItem } from './types';
-
-type Item = StatusCardItem;
-
-const props = defineProps({
-    icon: Object as PropType<FunctionalComponent>,
-    data: [Object, Array] as PropType<Item | [Item, Item]>,
-});
-
-const isItemArray = computed(() => Array.isArray(props.data));
-
-const AvatarIcon = props.icon;
-
-const nameTop = templateRef<HTMLElement>('nameTop');
-
-const { width: topWidth } = useElementSize(nameTop);
-
-const ellipsisWidth = computed(() => {
-    return `${topWidth.value - 105}px`;
-});
-</script>
 
 <style scoped lang="postcss"></style>

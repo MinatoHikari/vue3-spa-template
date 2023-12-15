@@ -1,27 +1,27 @@
-import type { PaginationInfo } from 'naive-ui';
+import type { PaginationInfo } from 'naive-ui'
 
-export type UsePaginationParams = {
-    defaultPageSize?: number;
-};
+export interface UsePaginationParams {
+    defaultPageSize?: number
+}
 
-export const usePagination = (params: UsePaginationParams = {}) => {
-    const { t } = useTypedI18n();
-    const eventHook = createEventHook<number>();
-    const { defaultPageSize } = params;
-    const current = ref(1);
-    const pageSize = ref(defaultPageSize ?? 30);
-    const total = ref(0);
+export function usePagination(params: UsePaginationParams = {}) {
+    const { t } = useTypedI18n()
+    const eventHook = createEventHook<number>()
+    const { defaultPageSize } = params
+    const current = ref(1)
+    const pageSize = ref(defaultPageSize ?? 30)
+    const total = ref(0)
 
     const handlePageChange = async (page: number) => {
-        current.value = page;
-        eventHook.trigger(page);
-    };
+        current.value = page
+        eventHook.trigger(page)
+    }
 
     const handlrPageSizeChange = async (size: number) => {
-        pageSize.value = size;
-        current.value = 1;
-        handlePageChange(1);
-    };
+        pageSize.value = size
+        current.value = 1
+        handlePageChange(1)
+    }
 
     const pageSizes = computed(() => [
         {
@@ -48,11 +48,11 @@ export const usePagination = (params: UsePaginationParams = {}) => {
 
             value: 100,
         },
-    ]);
+    ])
 
     const suffix = (info: PaginationInfo) => {
-        return t('pagination.total', { number: info.itemCount });
-    };
+        return t('pagination.total', { number: info.itemCount })
+    }
 
     return {
         current,
@@ -63,5 +63,5 @@ export const usePagination = (params: UsePaginationParams = {}) => {
         handlrPageSizeChange,
         pageSizes,
         suffix,
-    };
-};
+    }
+}

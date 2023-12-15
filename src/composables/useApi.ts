@@ -1,12 +1,12 @@
-import { useLoadingBar } from 'naive-ui';
-import type { Nullable } from '~/utils/helper';
-import type { FormExtraParams, LangParams, RequestConfig } from '~/utils/http/request';
-import { getRequest, postForm, postRequest } from '~/utils/http/request';
+import { useLoadingBar } from 'naive-ui'
+import type { Nullable } from '~/utils/helper'
+import type { FormExtraParams, LangParams, RequestConfig } from '~/utils/http/request'
+import { getRequest, postForm, postRequest } from '~/utils/http/request'
 
-type DefaultParams = Record<string, unknown> & LangParams;
+type DefaultParams = Record<string, unknown> & LangParams
 
-export const useApis = () => {
-    const loadingBar = useLoadingBar();
+export function useApis() {
+    const loadingBar = useLoadingBar()
 
     return {
         getRequest: <T = DefaultParams, R = Record<string, any>>(
@@ -17,7 +17,7 @@ export const useApis = () => {
             return getRequest<T, R>(url, data, {
                 progressBar: loadingBar,
                 ...config,
-            });
+            })
         },
         postRequest: <T = DefaultParams, R = Record<string, any>>(
             url: string,
@@ -27,7 +27,7 @@ export const useApis = () => {
             return postRequest<T, R>(url, data, {
                 progressBar: loadingBar,
                 ...config,
-            });
+            })
         },
         postForm: <T = DefaultParams, R = Record<string, any>>(
             url: string,
@@ -37,9 +37,9 @@ export const useApis = () => {
             return postForm<T, R>(url, data, {
                 progressBar: loadingBar,
                 ...config,
-            });
+            })
         },
-    };
-};
+    }
+}
 
-export { useResponseHandler } from '~/utils/http/handler';
+export { useResponseHandler } from '~/utils/http/handler'

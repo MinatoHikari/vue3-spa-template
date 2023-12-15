@@ -1,3 +1,44 @@
+<script setup lang="ts">
+import type { Ref } from 'vue'
+import {
+    NThemeEditor,
+    dateDeDE,
+    dateEnUS,
+    dateFrFR,
+    dateZhCN,
+    deDE,
+    enUS,
+    frFR,
+    zhCN,
+} from 'naive-ui'
+import { Locales } from './composables/i18n'
+import theme from './styles/naive-ui-theme-overrides.json'
+import { useThemeditorVisible } from './composables/useThemeEditor'
+
+const { locale } = useTypedI18n()
+const localeStr = locale as Ref<Locales>
+const localeObj = shallowRef({
+    [Locales.zhCN]: {
+        lang: zhCN,
+        date: dateZhCN,
+    },
+    [Locales.enUS]: {
+        lang: enUS,
+        date: dateEnUS,
+    },
+    [Locales.deDE]: {
+        lang: deDE,
+        date: dateDeDE,
+    },
+    [Locales.frFR]: {
+        lang: frFR,
+        date: dateFrFR,
+    },
+})
+
+const { localFlagShowThemeEditor, showThemeEditor } = useThemeditorVisible()
+</script>
+
 <template>
     <n-config-provider
         :locale="localeObj[localeStr].lang"
@@ -27,46 +68,5 @@
         </n-dialog-provider>
     </n-config-provider>
 </template>
-
-<script setup lang="ts">
-import type { Ref } from 'vue';
-import {
-    NThemeEditor,
-    dateDeDE,
-    dateEnUS,
-    dateFrFR,
-    dateZhCN,
-    deDE,
-    enUS,
-    frFR,
-    zhCN,
-} from 'naive-ui';
-import { Locales } from './composables/i18n';
-import theme from './styles/naive-ui-theme-overrides.json';
-import { useThemeditorVisible } from './composables/useThemeEditor';
-
-const { locale } = useTypedI18n();
-const localeStr = locale as Ref<Locales>;
-const localeObj = shallowRef({
-    [Locales.zhCN]: {
-        lang: zhCN,
-        date: dateZhCN,
-    },
-    [Locales.enUS]: {
-        lang: enUS,
-        date: dateEnUS,
-    },
-    [Locales.deDE]: {
-        lang: deDE,
-        date: dateDeDE,
-    },
-    [Locales.frFR]: {
-        lang: frFR,
-        date: dateFrFR,
-    },
-});
-
-const { localFlagShowThemeEditor, showThemeEditor } = useThemeditorVisible();
-</script>
 
 <style scoped></style>

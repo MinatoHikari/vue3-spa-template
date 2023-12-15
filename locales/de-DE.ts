@@ -10,4 +10,4 @@ export default {
         logout: 'Abmelden',
         logout_success: 'Abmeldung erfolgreich',
     },
-};
+}

@@ -1,3 +1,58 @@
+<script setup lang="ts" name="CardContainer">
+import { cardProps } from 'naive-ui'
+import type { PropType } from 'vue'
+
+const props = defineProps({
+    ...cardProps,
+    size: {
+        type: cardProps.size.type,
+        default: 'small',
+    },
+    segmented: {
+        type: cardProps.segmented.type,
+        default: () => ({ content: true }),
+    },
+    preset: {
+        type: [Array, String] as PropType<
+            | ('query-form' | 'fill-remain' | 'transparent')[]
+            | ('query-form' | 'fill-remain' | 'transparent')
+        >,
+    },
+})
+
+function hasPreset(str: 'query-form' | 'fill-remain' | 'transparent') {
+    if (typeof props.preset === 'string' && str === props.preset) return true
+    else if (props.preset && props.preset.includes(str)) return true
+    else return false
+}
+
+const contentStyle = computed(() => {
+    const paddingNormal = hasPreset('transparent') ? '0' : '18px'
+    const defaultContentStyle: typeof props.contentStyle = {
+        paddingTop: paddingNormal,
+        paddingBottom: hasPreset('query-form') ? '0' : paddingNormal,
+        paddingLeft: paddingNormal,
+        paddingRight: paddingNormal,
+    }
+    // if (hasPreset('fill-remain')) {
+    //     defaultContentStyle.display = 'flex';
+    //     defaultContentStyle.flexDirection = 'column';
+    // }
+    if (props.contentStyle) {
+        if (typeof props.contentStyle === 'string') {
+            return props.contentStyle
+        }
+        else {
+            return {
+                ...defaultContentStyle,
+                ...props.contentStyle,
+            }
+        }
+    }
+    return defaultContentStyle
+})
+</script>
+
 <template>
     <NCard
         class="card-container"
@@ -26,58 +81,6 @@
         </template>
     </NCard>
 </template>
-
-<script setup lang="ts" name="CardContainer">
-import { cardProps } from 'naive-ui';
-import type { PropType } from 'vue';
-
-const props = defineProps({
-    ...cardProps,
-    size: {
-        type: cardProps.size.type,
-        default: 'small',
-    },
-    segmented: {
-        type: cardProps.segmented.type,
-        default: () => ({ content: true }),
-    },
-    preset: {
-        type: [Array, String] as PropType<
-            | ('query-form' | 'fill-remain' | 'transparent')[]
-            | ('query-form' | 'fill-remain' | 'transparent')
-        >,
-    },
-});
-
-const hasPreset = (str: 'query-form' | 'fill-remain' | 'transparent') => {
-    if (typeof props.preset === 'string' && str === props.preset) return true;
-    else if (props.preset && props.preset.includes(str)) return true;
-    else return false;
-};
-
-const contentStyle = computed(() => {
-    const paddingNormal = hasPreset('transparent') ? '0' : '18px';
-    const defaultContentStyle: Partial<CSSStyleDeclaration> = {
-        paddingTop: paddingNormal,
-        paddingBottom: hasPreset('query-form') ? '0' : paddingNormal,
-        paddingLeft: paddingNormal,
-        paddingRight: paddingNormal,
-    };
-    // if (hasPreset('fill-remain')) {
-    //     defaultContentStyle.display = 'flex';
-    //     defaultContentStyle.flexDirection = 'column';
-    // }
-    if (props.contentStyle) {
-        if (typeof props.contentStyle === 'string') return props.contentStyle;
-        else
-            return {
-                ...defaultContentStyle,
-                ...props.contentStyle,
-            };
-    }
-    return defaultContentStyle;
-});
-</script>
 
 <style lang="postcss" scoped>
 .card-container:not(:nth-child(1)) {

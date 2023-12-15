@@ -1,23 +1,23 @@
-import type { MaybeRefOrGetter } from '@vueuse/core';
-import type { PopconfirmProps } from 'naive-ui';
-import { NButton, NPopconfirm } from 'naive-ui';
-import type { VNode } from 'vue';
+import type { MaybeRefOrGetter } from '@vueuse/core'
+import type { PopconfirmProps } from 'naive-ui'
+import { NButton, NPopconfirm } from 'naive-ui'
+import type { VNode } from 'vue'
 
 export interface TableActionModel {
-    popProps?: PopconfirmProps;
+    popProps?: PopconfirmProps
     popSlots?: {
-        default?: () => VNode | string;
-        icon?: () => VNode | string;
-        action?: () => VNode | string;
-    };
-    label: string;
-    type?: 'default' | 'warning' | 'primary' | 'success' | 'error' | 'info';
-    disabled?: boolean;
-    onClick?: () => void;
+        default?: () => VNode | string
+        icon?: () => VNode | string
+        action?: () => VNode | string
+    }
+    label: string
+    type?: 'default' | 'warning' | 'primary' | 'success' | 'error' | 'info'
+    disabled?: boolean
+    onClick?: () => void
 }
 
-const getActins = (actions: MaybeRefOrGetter<TableActionModel[]>) => {
-    const { t } = useTypedI18n();
+function getActins(actions: MaybeRefOrGetter<TableActionModel[]>) {
+    const { t } = useTypedI18n()
     return resolveUnref(actions).map((it, index, array) => {
         const button = h(
             NButton,
@@ -34,10 +34,11 @@ const getActins = (actions: MaybeRefOrGetter<TableActionModel[]>) => {
             {
                 default: () => it.label,
             },
-        );
+        )
         if (!it.popProps) {
-            return button;
-        } else {
+            return button
+        }
+        else {
             return h(
                 NPopconfirm,
                 {
@@ -49,15 +50,13 @@ const getActins = (actions: MaybeRefOrGetter<TableActionModel[]>) => {
                     trigger: () => button,
                     ...it.popSlots,
                 },
-            );
+            )
         }
-    });
-};
+    })
+}
 
-export const useRenderActionFn = <T>(
-    fn: (rowData: T, rowIndex?: number) => MaybeRefOrGetter<TableActionModel[]>,
-) => {
+export function useRenderActionFn<T>(fn: (rowData: T, rowIndex?: number) => MaybeRefOrGetter<TableActionModel[]>) {
     return (rowData: T, rowIndex?: number) => {
-        return getActins(fn(rowData, rowIndex));
-    };
-};
+        return getActins(fn(rowData, rowIndex))
+    }
+}

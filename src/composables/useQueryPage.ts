@@ -1,13 +1,13 @@
-import type { UsePaginationParams } from './usePagination';
-import type { TableCommonParams } from './useTableCommon';
+import type { UsePaginationParams } from './usePagination'
+import type { TableCommonParams } from './useTableCommon'
 
 export type UseQueryPageParams = {
-    paginationParams?: UsePaginationParams;
-    resetForm?: () => void;
-    fetchData?: () => void;
-} & TableCommonParams;
+    paginationParams?: UsePaginationParams
+    resetForm?: () => void
+    fetchData?: () => void
+} & TableCommonParams
 
-export const useQueryPage = (params: UseQueryPageParams = { flexHeightDifferences: 38 }) => {
+export function useQueryPage(params: UseQueryPageParams = { flexHeightDifferences: 38 }) {
     const {
         paginationParams,
         resetForm,
@@ -15,7 +15,7 @@ export const useQueryPage = (params: UseQueryPageParams = { flexHeightDifference
         flexHeightTable,
         flexHeightDifferences,
         remote,
-    } = params;
+    } = params
     const {
         handlePageChange,
         handlrPageSizeChange,
@@ -25,24 +25,24 @@ export const useQueryPage = (params: UseQueryPageParams = { flexHeightDifference
         registEvent,
         pageSizes,
         suffix,
-    } = usePagination(paginationParams);
+    } = usePagination(paginationParams)
 
     registEvent(() => {
-        fetchData && fetchData();
-    });
+        fetchData && fetchData()
+    })
 
-    const collapsed = ref(false);
+    const collapsed = ref(false)
 
     const search = async () => {
-        current.value = 1;
-        handlePageChange(1);
-    };
+        current.value = 1
+        handlePageChange(1)
+    }
 
     const resetPage = async () => {
-        current.value = 1;
-        resetForm && resetForm();
-        handlePageChange(1);
-    };
+        current.value = 1
+        resetForm && resetForm()
+        handlePageChange(1)
+    }
 
     const paginationProps = computed({
         get: () => ({
@@ -55,23 +55,23 @@ export const useQueryPage = (params: UseQueryPageParams = { flexHeightDifference
             suffix,
         }),
         set: (val) => {
-            console.log(val);
-            pageSize.value = val.pageSize;
-            current.value = val.page;
-            total.value = val.itemCount;
+            console.log(val)
+            pageSize.value = val.pageSize
+            current.value = val.page
+            total.value = val.itemCount
         },
-    });
+    })
 
     const { tableCommonProps } = useTableCommon({
         remote,
         flexHeightTable,
         flexHeightDifferences,
-    });
+    })
 
     const tableEvents = {
         'on-update:page': handlePageChange,
         'on-update:page-size': handlrPageSizeChange,
-    };
+    }
 
     return {
         search,
@@ -88,5 +88,5 @@ export const useQueryPage = (params: UseQueryPageParams = { flexHeightDifference
         paginationProps,
         tableEvents,
         tableCommonProps,
-    };
-};
+    }
+}

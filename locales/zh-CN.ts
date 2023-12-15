@@ -10,4 +10,9 @@ export default {
         logout: '注销',
         logout_success: '注销成功',
     },
-};
+    page: {
+        document: {
+            document: '文档',
+        },
+    },
+}

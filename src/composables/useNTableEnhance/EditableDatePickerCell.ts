@@ -1,19 +1,16 @@
-import type { MaybeRefOrGetter } from '@vueuse/core';
-import type { DatePickerProps } from 'naive-ui';
-import { NDatePicker } from 'naive-ui';
-import type { ComponentPublicInstance } from 'vue';
-import type { EnhanceRow } from '~/composables/useNTableEnhance/useNTableEnhance';
-import { functionRefWrapper } from '~/utils/helper';
+import type { MaybeRefOrGetter } from '@vueuse/core'
+import type { DatePickerProps } from 'naive-ui'
+import { NDatePicker } from 'naive-ui'
+import type { ComponentPublicInstance } from 'vue'
+import type { EnhanceRow } from '~/composables/useNTableEnhance/useNTableEnhance'
+import { functionRefWrapper } from '~/utils/helper'
 
-export const useEditableDatePickerCell = <Row extends Record<string, unknown>>(
-    rowData: EnhanceRow<Row>,
-    key: keyof Row,
-) => {
-    const itemProps = ref<DatePickerProps>({});
+export function useEditableDatePickerCell<Row extends Record<string, unknown>>(rowData: EnhanceRow<Row>, key: keyof Row) {
+    const itemProps = ref<DatePickerProps>({})
 
     const defineItemProps = (props: MaybeRefOrGetter<DatePickerProps>) => {
-        (itemProps.value as DatePickerProps) = resolveUnref(props);
-    };
+        (itemProps.value as DatePickerProps) = resolveUnref(props)
+    }
 
     const EditableDatePickerCell = defineComponent({
         props: enhanceTableCommonCellProps,
@@ -30,30 +27,30 @@ export const useEditableDatePickerCell = <Row extends Record<string, unknown>>(
                         ref: functionRefWrapper(inputRef, {
                             changeOnlyWhenVmExist: true,
                             callback: (vm) => {
-                                inputRef.value = vm as InstanceType<typeof NDatePicker>;
-                                emit('refUpdate', vm as ComponentPublicInstance);
+                                inputRef.value = vm as InstanceType<typeof NDatePicker>
+                                emit('refUpdate', vm as ComponentPublicInstance)
                             },
                         }),
                         onUpdateFormattedValue: (e) => {
                             handleEffect(e, false).then(() => {
-                                emit('editingUpdate', false);
-                            });
+                                emit('editingUpdate', false)
+                            })
                         },
                         ...itemProps.value,
-                    });
+                    })
                 },
                 wrapperProps: {
                     ...attrs,
                 },
                 revertOnBlur: p.revertOnBlur,
-            });
+            })
 
-            return () => (p.isEditing ? h(cm) : h('div', {}, [rowData[key] as string]));
+            return () => (p.isEditing ? h(cm) : h('div', {}, [rowData[key] as string]))
         },
-    });
+    })
 
     return {
         EditableDatePickerCell,
         defineItemProps,
-    };
-};
+    }
+}

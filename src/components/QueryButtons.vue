@@ -1,3 +1,33 @@
+<script setup lang="ts">
+import { NButton, NSpace } from 'naive-ui'
+
+const props = withDefaults(
+    defineProps<{
+        searchButtonProps?: InstanceType<typeof NButton>['$props']
+        resetButtonProps?: InstanceType<typeof NButton>['$props']
+        defaultCollapsed?: boolean
+        showCollapsed?: boolean
+    }>(),
+    {
+        showCollapsed: true,
+    },
+)
+
+const emits = defineEmits({
+    search: () => true,
+    reset: () => true,
+
+    collapse: (collapse: boolean) => true,
+})
+
+const collapsed = ref(props.defaultCollapsed ?? false)
+
+function onCollapse() {
+    collapsed.value = !collapsed.value
+    emits('collapse', collapsed.value)
+}
+</script>
+
 <template>
     <NSpace w-full justify="end" v-bind="$attrs">
         <NButton type="primary" v-bind="props.searchButtonProps" @click="$emit('search')">
@@ -16,36 +46,6 @@
         </NButton>
     </NSpace>
 </template>
-
-<script setup lang="ts">
-import { NButton, NSpace } from 'naive-ui';
-
-const props = withDefaults(
-    defineProps<{
-        searchButtonProps?: InstanceType<typeof NButton>['$props'];
-        resetButtonProps?: InstanceType<typeof NButton>['$props'];
-        defaultCollapsed?: boolean;
-        showCollapsed?: boolean;
-    }>(),
-    {
-        showCollapsed: true,
-    },
-);
-
-const emits = defineEmits({
-    search: () => true,
-    reset: () => true,
-
-    collapse: (collapse: boolean) => true,
-});
-
-const collapsed = ref(props.defaultCollapsed ?? false);
-
-const onCollapse = () => {
-    collapsed.value = !collapsed.value;
-    emits('collapse', collapsed.value);
-};
-</script>
 
 <style scoped>
 .icon {

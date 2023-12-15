@@ -1,9 +1,9 @@
-import { registerMicroApps } from 'qiankun';
-import { mode } from '~/main';
+import { registerMicroApps } from 'qiankun'
+import { mode } from '~/main'
 
 const defaultLocale = useStorage('locale', ref('zh-CN'), localStorage, {
     writeDefaults: true,
-});
+})
 
 // export const microAppStateActions = initGlobalState({
 //     locale: defaultLocale.value,
@@ -20,7 +20,7 @@ const defaultLocale = useStorage('locale', ref('zh-CN'), localStorage, {
 //     return container as HTMLElement;
 // };
 
-export const initQiankun = () => {
+export function initQiankun() {
     registerMicroApps(
         [
             {
@@ -32,22 +32,22 @@ export const initQiankun = () => {
         ],
         {
             beforeLoad: (app: any) => {
-                console.log('before load+++++++++++', app.name);
-                return Promise.resolve();
+                console.log('before load+++++++++++', app.name)
+                return Promise.resolve()
             },
             beforeMount: (app: any) => {
-                console.log('before mount----------', app.name);
-                return Promise.resolve();
+                console.log('before mount----------', app.name)
+                return Promise.resolve()
             },
             // qiankun 生命周期钩子 - 微应用挂载后
             afterMount: (app: any) => {
-                console.log('after mount============', app.name);
-                return Promise.resolve();
+                console.log('after mount============', app.name)
+                return Promise.resolve()
             },
             afterUnmount: (app: any) => {
-                console.log('after unmount===+++++----', app.name);
-                return Promise.resolve();
+                console.log('after unmount===+++++----', app.name)
+                return Promise.resolve()
             },
         },
-    );
-};
+    )
+}

@@ -1,3 +1,9 @@
+<script setup lang="ts">
+const { options, handleSelect, locale } = useGlobalLanguage()
+
+const isDev = import.meta.env.MODE === 'development'
+</script>
+
 <template>
     <div p="x-4 y-4">
         <n-grid :cols="1">
@@ -23,7 +29,9 @@
                                 <n-icon size="14">
                                     <i-carbon-language />
                                 </n-icon>
-                                <n-text ml-2>{{ locale }}</n-text>
+                                <n-text ml-2>
+                                    {{ locale }}
+                                </n-text>
                             </n-button>
                         </n-dropdown>
                     </div>
@@ -37,12 +45,6 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-const { options, handleSelect, locale } = useGlobalLanguage();
-
-const isDev = import.meta.env.MODE === 'development';
-</script>
 
 <style scoped>
 .test {

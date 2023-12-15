@@ -1,134 +1,135 @@
-import type { MaybeRefOrGetter } from '@vueuse/core';
-import type { Component, UnwrapRef } from 'vue';
-import type { OpenNewWindowConfig } from './useNewWindow';
-import { useNewWindow } from './useNewWindow';
+import type { MaybeRefOrGetter } from '@vueuse/core'
+import type { Component, UnwrapRef } from 'vue'
+import type { OpenNewWindowConfig } from './useNewWindow'
+import { useNewWindow } from './useNewWindow'
 
-export type ContainerConfig<K> = {
-    children: { name: keyof K; component: Component }[];
-    defaultComponent: Component;
-};
+export interface ContainerConfig<K> {
+    children: { name: keyof K, component: Component }[]
+    defaultComponent: Component
+}
 
 // 保证热更新 currentChild 正常
-const useCurrentChild = <K>() => {
-    const currentChild = ref<keyof K | 'default'>('default');
+function useCurrentChild<K>() {
+    const currentChild = ref<keyof K | 'default'>('default')
 
     return {
         currentChild,
-    };
-};
+    }
+}
 
-export const usePageContainer = <T, K>(
-    config: MaybeRefOrGetter<ContainerConfig<K>>,
-    createDataHook?: () => T,
-) => {
-    const eventsMap = new Map<string | number, () => void>();
-    const pageToEventMap = new Map<keyof K | 'default', (string | number)[]>();
-    const pageFromEventMap = new Map<keyof K | 'default', (string | number)[]>();
+export function usePageContainer<T, K>(config: MaybeRefOrGetter<ContainerConfig<K>>, createDataHook?: () => T) {
+    const eventsMap = new Map<string | number, () => void>()
+    const pageToEventMap = new Map<keyof K | 'default', (string | number)[]>()
+    const pageFromEventMap = new Map<keyof K | 'default', (string | number)[]>()
     const pageFromToEventMap = new Map<
         keyof K | 'default',
-        { to: keyof K | 'default'; eventName: string | number }[]
-    >();
+        { to: keyof K | 'default', eventName: string | number }[]
+    >()
 
     const useContainer = createGlobalState(() => {
-        const { currentChild } = useCurrentChild<K>();
-        const containers = shallowRef(resolveUnref(config));
-        const data = createDataHook ? createDataHook() : ({} as T);
+        const { currentChild } = useCurrentChild<K>()
+        const containers = shallowRef(resolveUnref(config))
+        const data = createDataHook ? createDataHook() : ({} as T)
 
         const to = async (childName: UnwrapRef<keyof K | 'default'>) => {
-            currentChild.value = childName;
-        };
+            currentChild.value = childName
+        }
 
-        const { openNewWindow: openWindowFn } = useNewWindow();
+        const { openNewWindow: openWindowFn } = useNewWindow()
 
         const registerPageEvent = (name: string | number, func: () => void) => {
-            eventsMap.set(name, func);
-        };
+            eventsMap.set(name, func)
+        }
 
         const dispatchPageEvent = (name: string) => {
-            const fn = eventsMap.get(name);
-            fn && fn();
-        };
+            const fn = eventsMap.get(name)
+            fn && fn()
+        }
 
         const onTo = ({
             childName,
             eventName,
         }: {
-            childName: keyof K | 'default';
-            eventName: string | number;
+            childName: keyof K | 'default'
+            eventName: string | number
         }) => {
-            if (!pageToEventMap.has(childName)) pageToEventMap.set(childName, []);
-            const events = pageToEventMap.get(childName) as (string | number)[];
-            events.push(eventName);
-        };
+            if (!pageToEventMap.has(childName))
+                pageToEventMap.set(childName, [])
+            const events = pageToEventMap.get(childName) as (string | number)[]
+            events.push(eventName)
+        }
 
         const onFrom = ({
             childName,
             eventName,
         }: {
-            childName: keyof K | 'default';
-            eventName: string | number;
+            childName: keyof K | 'default'
+            eventName: string | number
         }) => {
-            if (!pageFromEventMap.has(childName)) pageFromEventMap.set(childName, []);
-            const events = pageFromEventMap.get(childName) as (string | number)[];
-            events.push(eventName);
-        };
+            if (!pageFromEventMap.has(childName))
+                pageFromEventMap.set(childName, [])
+            const events = pageFromEventMap.get(childName) as (string | number)[]
+            events.push(eventName)
+        }
 
         const onFromTo = ({
             fromChildName,
             toChildName,
             eventName,
         }: {
-            fromChildName: keyof K | 'default';
-            toChildName: keyof K | 'default';
-            eventName: string | number;
+            fromChildName: keyof K | 'default'
+            toChildName: keyof K | 'default'
+            eventName: string | number
         }) => {
-            if (!pageFromEventMap.has(fromChildName)) pageFromEventMap.set(fromChildName, []);
-            const events = pageFromToEventMap.get(fromChildName);
-            if (events)
+            if (!pageFromEventMap.has(fromChildName))
+                pageFromEventMap.set(fromChildName, [])
+            const events = pageFromToEventMap.get(fromChildName)
+            if (events) {
                 events.push({
                     to: toChildName,
                     eventName,
-                });
-        };
+                })
+            }
+        }
 
         watch(currentChild, (v, oldV) => {
-            const toEventsArr = pageToEventMap.get(v as keyof K | 'default');
-            const fromEventsArr = pageFromEventMap.get(oldV as keyof K | 'default');
-            const fromToEventsArr = pageFromToEventMap.get(oldV as keyof K | 'default');
+            const toEventsArr = pageToEventMap.get(v as keyof K | 'default')
+            const fromEventsArr = pageFromEventMap.get(oldV as keyof K | 'default')
+            const fromToEventsArr = pageFromToEventMap.get(oldV as keyof K | 'default')
             if (toEventsArr) {
                 toEventsArr.forEach((name) => {
-                    const fn = eventsMap.get(name);
-                    fn && fn();
-                });
-                toEventsArr.length = 0;
+                    const fn = eventsMap.get(name)
+                    fn && fn()
+                })
+                toEventsArr.length = 0
             }
             if (fromEventsArr) {
                 fromEventsArr.forEach((name) => {
-                    const fn = eventsMap.get(name);
-                    fn && fn();
-                });
-                fromEventsArr.length = 0;
+                    const fn = eventsMap.get(name)
+                    fn && fn()
+                })
+                fromEventsArr.length = 0
             }
             if (fromToEventsArr) {
                 fromToEventsArr.forEach((item) => {
                     if (item.to === v) {
-                        const fn = eventsMap.get(item.eventName);
-                        fn && fn();
+                        const fn = eventsMap.get(item.eventName)
+                        fn && fn()
                     }
-                });
+                })
                 pageFromToEventMap.set(
                     oldV as keyof K | 'default',
-                    fromToEventsArr.filter((i) => i.to !== v),
-                );
+                    fromToEventsArr.filter(i => i.to !== v),
+                )
             }
-        });
+        })
 
         return {
             data,
             currentChild: computed<keyof K | 'default'>({
                 get: () => currentChild.value as keyof K | 'default',
                 set: (v) => {
-                    (currentChild.value as keyof K | 'default') = v;
+                    (currentChild.value as keyof K | 'default') = v
                 },
             }),
             containerChildren: computed(() => containers.value.children),
@@ -138,7 +139,7 @@ export const usePageContainer = <T, K>(
                 openWindowFn('', {
                     is: pathName as string,
                     ...config,
-                });
+                })
             },
             /** 跳转到对应的 currentChild */
             to,
@@ -152,20 +153,20 @@ export const usePageContainer = <T, K>(
             registerPageEvent,
             /** 手动触发 registerPageEvent 注册的事件 */
             dispatchPageEvent,
-        };
-    });
+        }
+    })
 
-    return useContainer;
-};
+    return useContainer
+}
 
-export const usePageContainerBack = () => {
-    const vm = getCurrentInstance();
+export function usePageContainerBack() {
+    const vm = getCurrentInstance()
 
     const back = () => {
-        vm?.emit('back');
-    };
+        vm?.emit('back')
+    }
 
     return {
         back,
-    };
-};
+    }
+}
