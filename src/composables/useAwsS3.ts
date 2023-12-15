@@ -208,11 +208,9 @@ export function useAwsS3() {
     // 文件列表
     const listObjects = async (filter: {
         Delimiter?: string
-        EncodingType?: url
         Marker?: string
         MaxKeys?: number
         Prefix?: string
-        RequestPayer?: string
         ExpectedBucketOwner?: string
     }) => {
         const configGot = await ensureS3Ref()
@@ -228,6 +226,8 @@ export function useAwsS3() {
         const output = await S3Ref.value!.listObjects({
             ...filter,
             Bucket: import.meta.env.VITE_S3_BUCKET,
+            EncodingType: 'url',
+            RequestPayer: 'requester',
         })
 
         if (output.Contents)
